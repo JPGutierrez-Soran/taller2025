@@ -1,0 +1,35 @@
+---
+- name: Play para la instalación y configuración inicial de webserver
+  hosts: webserver
+  become: yes
+
+  tasks:
+    - name: Instalar paquete httpd
+      ansible.builtin.dnf:
+        name: httpd
+        state: present
+
+    - name: Servicio HTTPD iniciado y habilitado
+      ansible.builtin.systemd_service:
+        name: httpd
+        enabled: true
+        state: started
+
+    - name: Habilitar los puertos en el firewall
+      ansible.posix.firewalld:
+        service: "{{ item }}"
+        state: enabled
+        permanent: true
+        immediate: true
+      loop:
+        - http
+        - https
+
+    - name: Archivo índice customizado
+      ansible.builtin.template:
+        src: ../templates/index.j2
+        dest: /var/www/html/index.html
+        owner: apache
+        group: apache
+        mode: u=rw,g=r,o=r
+
