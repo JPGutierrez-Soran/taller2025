@@ -1,0 +1,23 @@
+---
+- hosts: ubuntu
+  become: true
+  serial: 1
+
+  tasks:
+    - name: Crear grupo entreprise
+      ansible.builtin.group:
+        name: entreprise
+        state: present
+
+    - name: Crear usuarios y agregarlos al grupo
+      ansible.builtin.user:
+        name: "{{ item}}"
+        groups: entreprise
+        append: yes
+        state: present
+      loop:
+        - picand
+        - data
+        - cruscer.md
+        - troy
+

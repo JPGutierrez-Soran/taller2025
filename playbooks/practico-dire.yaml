@@ -1,0 +1,18 @@
+---
+- hosts: ubuntu
+  become: true
+
+  tasks:
+    - name: Crear directorio 
+      ansible.builtin.file:
+        path: /var/entreprise
+        state: directory
+        owner: picand
+        group: entreprise
+        mode: '2770'
+      register: resultado
+
+    - name: Mostrar resultado
+      ansible.builtin.debug:
+        msg: "{{ resultado.diff.after }}"
+      when: resultado.changed
